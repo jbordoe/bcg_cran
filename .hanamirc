@@ -1,0 +1,4 @@
+project=cran
+architecture=container
+test=rspec
+template=erb
