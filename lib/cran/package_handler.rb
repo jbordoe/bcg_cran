@@ -6,17 +6,26 @@ class PackageHandler
   CRAN_ROOT_URL = 'http://cran.r-project.org/src/contrib'
   PACKAGE_LIST_URL = "#{CRAN_ROOT_URL}/PACKAGES"
 
-  def self.get_packages
+  def self.get_packages(limit = 0)
     package_names = get_package_list
 
-    package_names.map{|p| get_package(p)} 
+    package_names = package_names[0..limit] if limit > 0
+    packages = package_names.map{|p| 
+      begin
+        get_package(p)
+      rescue
+        nil
+      end
+    }
+    packages.select{|e| !e.nil?}
   end
 
   def self.get_package(name)
     conn = Faraday.new do |builder|
       builder.adapter Faraday.default_adapter 
     end
-    response = conn.get "#{CRAN_ROOT_URL}/#{name}.tar.gz"
+    package_url = "#{CRAN_ROOT_URL}/#{name}.tar.gz"
+    response = conn.get package_url
 
     dir = Dir.mktmpdir
     tmpfilename = "#{dir}/#{name}.tar.gz"
@@ -31,7 +40,7 @@ class PackageHandler
     Package.new(
       name: package_data['Package'],
       version: package_data['Version'],
-      date: package_data['Date'] ? DateTime.parse(package_data['Date']) : nil,
+      date: DateTime.parse(package_data['Date/Publication']),
       description: package_data['Description'],
       authors: package_data['Author'].gsub(/\s\[.*?\]/, ''),
       maintainer: package_data['Maintainer']
