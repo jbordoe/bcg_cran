@@ -7,6 +7,7 @@ gem 'hanami-model', '~> 0.7'
 
 gem 'sqlite3'
 gem 'faraday'
+gem 'treetop-dcf'
 
 group :development do
   # Code reloading
@@ -21,6 +22,7 @@ end
 group :test do
   gem 'rspec'
   gem 'capybara'
+  gem 'webmock'
 end
 
 group :production do
