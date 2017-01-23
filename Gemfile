@@ -6,6 +6,7 @@ gem 'hanami',       '~> 0.9'
 gem 'hanami-model', '~> 0.7'
 
 gem 'sqlite3'
+gem 'faraday'
 
 group :development do
   # Code reloading
